@@ -31,7 +31,9 @@ public class CloseFutureClient {
                 })
                 .connect(new InetSocketAddress("localhost", 8080));
         System.out.println(channelFuture.getClass());
-        Channel channel = channelFuture.sync().channel();
+        Channel channel = channelFuture
+                .sync()
+                .channel();
         log.debug("{}", channel);
         new Thread(()->{
             Scanner scanner = new Scanner(System.in);

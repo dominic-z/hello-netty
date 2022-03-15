@@ -30,10 +30,11 @@ public class EventLoopClient {
                 .connect(new InetSocketAddress("localhost", 8080)); // 1s 秒后
 
         // 2.1 使用 sync 方法同步处理结果
-        /*channelFuture.sync(); // 阻塞住当前线程，直到nio线程连接建立完毕
-        Channel channel = channelFuture.channel();
-        log.debug("{}", channel);
-        channel.writeAndFlush("hello, world");*/
+//        channelFuture.sync(); // 阻塞住当前线程，直到nio线程连接建立完毕
+//        Channel channel = channelFuture.channel();
+////        log.debug("{}", channel); // 这一步log的时长足够连接建立了，为了突出实验效果，将这个log注释，让主线程在连接未建立的时候进行数据发送
+//        channel.writeAndFlush("hello, world");
+//        log.debug("{}", channel);
 
         // 2.2 使用 addListener(回调对象) 方法异步处理结果
         channelFuture.addListener(new ChannelFutureListener() {

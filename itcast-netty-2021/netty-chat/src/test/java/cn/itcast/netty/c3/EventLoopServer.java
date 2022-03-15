@@ -23,21 +23,23 @@ public class EventLoopServer {
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
                     protected void initChannel(NioSocketChannel ch) throws Exception {
-                        ch.pipeline().addLast("handler1", new ChannelInboundHandlerAdapter() {
-                            @Override                                         // ByteBuf
-                            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-                                ByteBuf buf = (ByteBuf) msg;
-                                log.debug(buf.toString(Charset.defaultCharset()));
-                                ctx.fireChannelRead(msg); // 让消息传递给下一个handler
-                            }
-                        });
-                        /*.addLast(group, "handler2", new ChannelInboundHandlerAdapter() {
-                            @Override                                         // ByteBuf
-                            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-                                ByteBuf buf = (ByteBuf) msg;
-                                log.debug(buf.toString(Charset.defaultCharset()));
-                            }
-                        });*/
+                        ch.pipeline()
+                                .addLast("handler1",
+                                        new ChannelInboundHandlerAdapter() {
+                                            @Override                                         // ByteBuf
+                                            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+                                                ByteBuf buf = (ByteBuf) msg;
+                                                log.debug(buf.toString(Charset.defaultCharset()));
+                                                ctx.fireChannelRead(msg); // 让消息传递给下一个handler
+                                            }
+                                        })
+                                .addLast(group, "handler2", new ChannelInboundHandlerAdapter() {
+                                    @Override                                         // ByteBuf
+                                    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+                                        ByteBuf buf = (ByteBuf) msg;
+                                        log.debug(buf.toString(Charset.defaultCharset()));
+                                    }
+                                });
                     }
                 })
                 .bind(8080);
