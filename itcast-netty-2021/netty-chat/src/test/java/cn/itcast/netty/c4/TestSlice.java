@@ -11,25 +11,33 @@ public class TestSlice {
         buf.writeBytes(new byte[]{'a','b','c','d','e','f','g','h','i','j'});
         log(buf);
 
-        // 在切片过程中，没有发生数据复制
+//        // 在切片过程中，没有发生数据复制
+//        ByteBuf f1 = buf.slice(0, 5);
+//        // 'a','b','c','d','e', 'x'
+//        ByteBuf f2 = buf.slice(5, 5);
+//        log(f1);
+//        log(f2);
+//        System.out.println("========================");
+//        f1.setByte(0, 'b');
+//        log(f1);
+//        log(buf);
+
+        // 尝试将原有的bytebuf给release掉
         ByteBuf f1 = buf.slice(0, 5);
-        f1.retain();
+        f1.retain(); // 标识引用计数加一 就是对原有的buf进行引用+1
         // 'a','b','c','d','e', 'x'
         ByteBuf f2 = buf.slice(5, 5);
-        f2.retain();
+        f2.retain(); // 标识引用计数加一 就是对原有的buf进行引用+1
         log(f1);
         log(f2);
 
         System.out.println("释放原有 byteBuf 内存");
         buf.release();
         log(f1);
-
+        log(f2);
 
         f1.release();
         f2.release();
-        /*System.out.println("========================");
-        f1.setByte(0, 'b');
-        log(f1);
-        log(buf);*/
+
     }
 }

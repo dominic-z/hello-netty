@@ -30,7 +30,9 @@ public class EchoClient {
                                 ByteBuf buffer = (ByteBuf) msg;
                                 System.out.println(buffer.toString(Charset.defaultCharset()));
 
+                                buffer.release();
                                 // 思考：需要释放 buffer 吗
+                                // 个人觉得需要释放，因为后续没地方用了；buffer也不会再向下传递；
                             }
                         });
                     }

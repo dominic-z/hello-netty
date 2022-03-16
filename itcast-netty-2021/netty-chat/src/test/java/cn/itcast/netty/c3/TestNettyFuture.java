@@ -3,6 +3,7 @@ package cn.itcast.netty.c3;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.EventLoop;
+import io.netty.channel.nio.NioEventLoop;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
@@ -32,5 +33,7 @@ public class TestNettyFuture {
                 log.debug("接收结果:{}", future.getNow());
             }
         });
+        final Future<?> closeFuture = group.shutdownGracefully();
+        closeFuture.await();
     }
 }

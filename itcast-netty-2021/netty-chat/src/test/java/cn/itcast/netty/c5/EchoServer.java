@@ -30,8 +30,11 @@ public class EchoServer {
                                 response.writeBytes(buffer);
                                 ctx.writeAndFlush(response);
 
+                                buffer.release();
                                 // 思考：需要释放 buffer 吗
                                 // 思考：需要释放 response 吗
+                                // 个人觉得buffer需要release，因为后面不会再有人读了
+                                // 但是response不用，因为在HeadContext里自动释放
                             }
                         });
                     }
