@@ -9,12 +9,15 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
+
+import java.nio.charset.StandardCharsets;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
 
@@ -32,6 +35,7 @@ public class TestHttp {
                 protected void initChannel(SocketChannel ch) throws Exception {
                     ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
                     ch.pipeline().addLast(new HttpServerCodec());
+
                     ch.pipeline().addLast(new SimpleChannelInboundHandler<HttpRequest>() {
                         @Override
                         protected void channelRead0(ChannelHandlerContext ctx, HttpRequest msg) throws Exception {
@@ -49,6 +53,14 @@ public class TestHttp {
 
                             // 写回响应
                             ctx.writeAndFlush(response);
+                        }
+                    });
+
+                    ch.pipeline().addLast(new SimpleChannelInboundHandler<HttpContent>() {
+                        @Override
+                        protected void channelRead0(ChannelHandlerContext ctx, HttpContent msg) throws Exception {
+                            // 获取请求
+                            log.info("content: {}", msg.content().toString(StandardCharsets.UTF_8));
                         }
                     });
                     /*ch.pipeline().addLast(new ChannelInboundHandlerAdapter() {

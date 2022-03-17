@@ -14,9 +14,17 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 
 @Slf4j
-@ChannelHandler.Sharable
+//@ChannelHandler.Sharable
 public class MessageCodec extends ByteToMessageCodec<Message> {
 
+    /**
+     * 做的事情就是将将msy进行序列化，写入到out里
+     *
+     * @param ctx
+     * @param msg
+     * @param out
+     * @throws Exception
+     */
     @Override
     public void encode(ChannelHandlerContext ctx, Message msg, ByteBuf out) throws Exception {
         // 1. 4 字节的魔数
@@ -29,7 +37,7 @@ public class MessageCodec extends ByteToMessageCodec<Message> {
         out.writeByte(msg.getMessageType());
         // 5. 4 个字节
         out.writeInt(msg.getSequenceId());
-        // 无意义，对齐填充
+        // 无意义，对齐填充 为了对齐到16
         out.writeByte(0xff);
         // 6. 获取内容的字节数组
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -58,5 +66,6 @@ public class MessageCodec extends ByteToMessageCodec<Message> {
         log.debug("{}, {}, {}, {}, {}, {}", magicNum, version, serializerType, messageType, sequenceId, length);
         log.debug("{}", message);
         out.add(message);
+        log.info("{}", out);
     }
 }

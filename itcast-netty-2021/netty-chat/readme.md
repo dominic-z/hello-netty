@@ -82,7 +82,7 @@ transferTo的返回值是真实transfer的数据的大小
 # p77 
 netty无法使用junit，测试方法会直接结束；
 
-这一章节讲了出入栈处理器的执行流程；那个图挺好的，我截出来；
+这一章节讲了出入栈处理器的执行流程执行顺序；那个图挺好的，我截出来；
 ![img.png](readme.asset/p77.png)
 我理解可以将这个栈理解为一串拦截器，每次有事件发生的是时候，这个事件的数据就会从head走到tail，然后再从tail吐回给head，
 并且数据在进行流转的过程中，例如，in1调用了fireChannelRead，那么In_2也可以读取到具体的msg，当数据走到out_4的时候，因为自己是一个OUtBound，所以对msg不处理；
@@ -94,3 +94,13 @@ netty无法使用junit，测试方法会直接结束；
 
 # P85
 问题：为什么HeadHandler要实现入栈出栈，而tailHandler只实现了出栈； 这个栈到底是什么，这个栈里的handler到底代表着什么？
+
+
+# p94
+`ChannelOption.SO_RCVBUF`与`ChannelOption.RCVBUF_ALLOCATOR`这两个参数是啥意思呢？
+
+# p103
+需要注释掉`@ChannelHandler.Sharable`
+
+# p107
+可以看到这些Codec，例如`ByteToMessageCodec`，指的就是Byte转换成Message的编码器；

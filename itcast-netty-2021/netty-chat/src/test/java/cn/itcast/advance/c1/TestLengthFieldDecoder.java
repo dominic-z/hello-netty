@@ -11,7 +11,7 @@ public class TestLengthFieldDecoder {
     public static void main(String[] args) {
         EmbeddedChannel channel = new EmbeddedChannel(
                 new LengthFieldBasedFrameDecoder(
-                        1024, 0, 4, 1,4),
+                        1024, 0, 4, 1,5),
                 new LoggingHandler(LogLevel.DEBUG)
         );
 

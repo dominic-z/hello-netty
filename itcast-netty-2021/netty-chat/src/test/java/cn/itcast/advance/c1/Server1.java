@@ -32,7 +32,7 @@ public class Server1 {
                 }
             });
             ChannelFuture channelFuture = serverBootstrap.bind(8080).sync();
-            channelFuture.channel().closeFuture().sync();
+            channelFuture.channel().closeFuture().sync(); // 代码会在这里卡住
         } catch (InterruptedException e) {
             log.error("server error", e);
         } finally {
