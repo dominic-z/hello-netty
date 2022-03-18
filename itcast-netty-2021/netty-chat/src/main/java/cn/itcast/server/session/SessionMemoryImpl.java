@@ -5,6 +5,9 @@ import io.netty.channel.Channel;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * 单例，全局公用一个Session
+ */
 public class SessionMemoryImpl implements Session {
 
     private final Map<String, Channel> usernameChannelMap = new ConcurrentHashMap<>();

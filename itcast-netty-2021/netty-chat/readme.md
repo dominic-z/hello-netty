@@ -104,3 +104,7 @@ netty无法使用junit，测试方法会直接结束；
 
 # p107
 可以看到这些Codec，例如`ByteToMessageCodec`，指的就是Byte转换成Message的编码器；
+
+
+# p109
+该工程到p109就结束了，之后请看另一个工程

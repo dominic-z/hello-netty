@@ -9,6 +9,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+/**
+ * 单例，全局公用一个GroupSession
+ */
 public class GroupSessionMemoryImpl implements GroupSession {
     private final Map<String, Group> groupMap = new ConcurrentHashMap<>();
 
