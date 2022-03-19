@@ -24,3 +24,62 @@ RESV_ALLOCATOR参数是控制`public void channelRead(ChannelHandlerContext ctx,
 例如closeFuture方法返回的是channelFuture，可以向其中注册监听器，指的就是如果未来调用了close的话，那么就就会按照这个future里注册的监听器来执行回调；
 
 write与connect类似，返回的都是channelFuture，可以向其中注册监听器，指的都是当未来真正执行sync方法的时候，会按照当初注册的来进行回调
+
+# p139
+监听端口的channel是一个ServerSocketChannel（ssc），并且将NioServerSocketChannel（nssc）作为ssc的一个attachment，老师是说，当ssc监听到连接的时候，后续操作的时候，通过这个attachment来让后续的操作交给NIO的nssc来进行操作；
+
+# p146
+为啥有两个selector，unwrappedSelector是原始的selector，只不过用反射替换了其中两个变量的实现；
+那个selector是对unwrappedSelector的代理；
+
+
+# p147
+NioEventLoopd的run方法，讲课老师说，该方法是用来不断轮询自旋看是否有需要执行的方法；
+
+# p151
+接着P147的来说，这个run方法是干什么的呢？
+首先需要记住，这个NioEventLoop不止要处理io，也要处理一些普通任务（例如处理taskQueue里的任务）；且每个NioEventLoop都是单线程的；
+可以将EventLoop看做一个普通线程池+处理io的对象；
+
+他就一开始就是一个switch，这个switch的判断条件为`selectStrategy.calculateStrategy(selectNowSupplier, hasTasks())`；
+含义可以通过源码看得出，如果
+- 当前EventLoop里的任务队列为空 -> 说明当前任务队列里没事儿干；
+- 或者说当前任务队列不为空，但selector的selectNow发现当前没有任何io事件 -> 说明当前selector没有什么io事件触发；
+
+在上述情况下，那么就会进入到select分支；
+
+进入这个select分支做的事情，简单来说就是让selector去select等待io事件，
+只不过除了通过select等待事件，如果
+- 当前hasTask会返回true且wakenUp为false；
+- 当前loop被添加了新的任务（执行execute方法）从而调用了wakenUp方法，会尝试跳过此次select，见如下代码；
+```java
+if (hasTasks() && wakenUp.compareAndSet(false, true)) {
+                    selector.selectNow();
+                    selectCnt = 1;
+                    break;
+                }
+```
+- 等等
+
+不管怎么样，如果select()方法返回了，说明此时要么说明有提交了普通任务，要么就是selector有事件发生了，select方法就会返回；
+```java
+if (selectedKeys != 0 || oldWakenUp || wakenUp.get() || hasTasks() || hasScheduledTasks()) {
+                    // - Selected something,
+                    // - waken up by user, or
+                    // - the task queue has a pending task.
+                    // - a scheduled task is ready for processing
+                    break;
+                }
+```
+
+
+他就会去往后执行run方法之后的代码，处理连接以及处理io事件等等；其中`processSelectedKeys`就将各种select的key交给NioServerSocketChannel来处理(通过attachment拿到)；
+而runAllTasks即去处理各种任务队列里的任务；
+```java
+try {
+                        processSelectedKeys();
+                    } finally {
+                        // Ensure we always run tasks.
+                        runAllTasks();
+                    }
+```
