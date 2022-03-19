@@ -2,6 +2,9 @@ package cn.itcast.protocol;
 
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 
+/**
+ * 这就是个黏包半包处理器，通过找到信息的length来累积一条数据
+ */
 public class ProcotolFrameDecoder extends LengthFieldBasedFrameDecoder {
 
     public ProcotolFrameDecoder() {

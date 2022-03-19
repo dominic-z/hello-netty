@@ -17,3 +17,10 @@ ALLOCATOR参数是控制`ByteBuf buf = ctx.alloc().buffer();`，例如池化非�
 
 RESV_ALLOCATOR参数是控制`public void channelRead(ChannelHandlerContext ctx, Object msg)`的msg，
 指的是netty的缓冲区，即控制一些默认的handler之间传递的bytebuf的大小
+
+# p135
+重新理解Future，Future是一个未来对象；如果一个操作是一个异步操作，那么就会返回一个Future对象，可以通过对这个future对象注册一些listener来实现回调；
+
+例如closeFuture方法返回的是channelFuture，可以向其中注册监听器，指的就是如果未来调用了close的话，那么就就会按照这个future里注册的监听器来执行回调；
+
+write与connect类似，返回的都是channelFuture，可以向其中注册监听器，指的都是当未来真正执行sync方法的时候，会按照当初注册的来进行回调

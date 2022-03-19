@@ -33,9 +33,29 @@ public class RpcClient {
                     ch.pipeline().addLast(RPC_HANDLER);
                 }
             });
-            Channel channel = bootstrap.connect("localhost", 8080).sync().channel();
+            final ChannelFuture channelFuture = bootstrap.connect("localhost", 8080);
+            log.info("only channel: {}",channelFuture.channel()); // 强调，如果不sync的话，此时这个bootStrap是未连接上的
+            Channel channel = channelFuture.sync().channel();
 
-            ChannelFuture future = channel.writeAndFlush(new RpcRequestMessage(
+
+//            // 老师的写法
+//            ChannelFuture future = channel.writeAndFlush(new RpcRequestMessage(
+//                    1,
+//                    "cn.itcast.server.service.HelloService",
+//                    "sayHello",
+//                    String.class,
+//                    new Class[]{String.class},
+//                    new Object[]{"张三"}
+//            )).addListener(promise -> {
+//                // 排查异常的方式
+//                if (!promise.isSuccess()) {
+//                    Throwable cause = promise.cause();
+//                    log.error("error", cause);
+//                }
+//            });
+
+            // 我觉得这样写才对，先通过write来获取future，然后注册监听器，然后再flush
+            ChannelFuture future = channel.write(new RpcRequestMessage(
                     1,
                     "cn.itcast.server.service.HelloService",
                     "sayHello",
@@ -43,11 +63,13 @@ public class RpcClient {
                     new Class[]{String.class},
                     new Object[]{"张三"}
             )).addListener(promise -> {
+                // 排查异常的方式
                 if (!promise.isSuccess()) {
                     Throwable cause = promise.cause();
                     log.error("error", cause);
                 }
             });
+            channel.flush();
 
             channel.closeFuture().sync();
         } catch (Exception e) {

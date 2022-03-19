@@ -46,21 +46,25 @@ public interface Serializer {
         Json {
             @Override
             public <T> T deserialize(Class<T> clazz, byte[] bytes) {
-//                Gson gson = new GsonBuilder().registerTypeAdapter(Class.class, new Serializer.ClassCodec()).create();
-                Gson gson = new Gson();
+                Gson gson = new GsonBuilder().registerTypeAdapter(Class.class, new Serializer.ClassCodec()).create();
+//                Gson gson = new Gson();
                 String json = new String(bytes, StandardCharsets.UTF_8);
                 return gson.fromJson(json, clazz);
             }
 
             @Override
             public <T> byte[] serialize(T object) {
-//                Gson gson = new GsonBuilder().registerTypeAdapter(Class.class, new Serializer.ClassCodec()).create();
-                Gson gson = new Gson();
+                Gson gson = new GsonBuilder().registerTypeAdapter(Class.class, new Serializer.ClassCodec()).create();
+//                Gson gson = new Gson();
                 String json = gson.toJson(object);
                 return json.getBytes(StandardCharsets.UTF_8);
             }
         }
     }
+
+    /**
+     * 告知gson，对于某些类，如何序列化，这个是用来处理Class的
+     */
     class ClassCodec implements JsonSerializer<Class<?>>, JsonDeserializer<Class<?>> {
 
         @Override

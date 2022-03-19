@@ -21,6 +21,7 @@ public class RpcRequestMessageHandler extends SimpleChannelInboundHandler<RpcReq
         RpcResponseMessage response = new RpcResponseMessage();
         response.setSequenceId(message.getSequenceId());
         try {
+            // 假设目前就一个service
             HelloService service = (HelloService)
                     ServicesFactory.getService(Class.forName(message.getInterfaceName()));
             Method method = service.getClass().getMethod(message.getMethodName(), message.getParameterTypes());

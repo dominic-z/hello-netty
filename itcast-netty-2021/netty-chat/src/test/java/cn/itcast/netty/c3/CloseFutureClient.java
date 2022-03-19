@@ -48,6 +48,8 @@ public class CloseFutureClient {
             }
         }, "input").start();
 
+        // closeFuture就是说，当未来调用了close的时候的future对象，可以通过对这个对象注册各种listner来实现
+        // 当未来调用close的时候需要执行什么
         // 获取 CloseFuture 对象， 1) 同步处理关闭， 2) 异步处理关闭
         ChannelFuture closeFuture = channel.closeFuture();
         /*log.debug("waiting close...");
