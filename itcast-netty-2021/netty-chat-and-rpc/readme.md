@@ -83,3 +83,23 @@ try {
                         runAllTasks();
                     }
 ```
+
+
+# p156`
+这一节需要启动客户端来调试；
+
+记住，NioEventLoop的主调入口就是run方法，这个方法通过一个死循环来判断当前是否有事件发生，真正处理事件的方法，就是`processSelectedKeys`；
+但如果此时没有事件，该方法里面就立刻返回了；
+
+还记得在ServerBootstrap之中，init过程之中，给nssc的流水线注册了一个handler，即ServerBootstrapAcceptor这个内部类；
+
+就是这个handler，在accept之后会被触发（通过AbstractNioMessageChannel的fireRead方法）
+
+具体做事情的地方，就是`ServerBootstrapAcceptor`的`channelRead`方法 该方法里的child，可以理解为，nssc在accept之后返回的那个用于信息通讯的channel，
+并会触发register操作，这个操作里做了很多事情，例如：
+- 最重要的将accept之后的channel（记为nsc）绑定给childGroup，所以开始的时候，用的一直是childHandler方法来绑定各种handler；
+- 对nsc初始化：在`pipeline.invokeHandlerAddedIfNeeded();`这个代码，调用我们传给childHandler的`ChannelInitializer`的对象的初始化方法，从而对这个NioSocketChannel添加各种handler
+- 并且再让这个nsc监听read事件
+
+# p157
+视频代码位于`NioEventLoop`的`processSelectedKey`方法，即当有可读事件发生时，会走到read方法。
